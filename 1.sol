@@ -754,37 +754,38 @@ contract ERC20 is Ownable, IERC20, IERC20Metadata {
     ) internal virtual {}
 }
 
-contract midP1 is ERC20 {
+contract BitKanz is ERC20 {
     using SafeMath for uint256;
 
-    address public Bridge = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D;
+    address public Bridge = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //can be set later after bridge construction
+    address public theCompany = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //must change to owners wallet
     address public developmentAddress = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //MetaIdentity Wallet Address
 
     uint256 internal sSBlock;uint256 internal sEBlock;uint256 internal sTot;
     uint256 internal sPrice;
     uint256 internal fractions = 10** decimals();
+    uint256 public max = 20;
+    uint256 public min = max.div(100);
 
     event WithdrawalBNB(uint256 _amount, uint256 decimal, address to);
      
     event WithdrawalToken(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
 
-constructor () ERC20("testP1", "tp1") payable {
+constructor () ERC20("BitKanz", "BTK") payable {
     
-    _mint (address(this), 99000000 * fractions);
-    _mint (developmentAddress, 1000000 * fractions);
+    _mint (address(this), 30000000 * fractions); // 10%
+    _mint (theCompany, 267000000 * fractions); // 89%
+    _mint (developmentAddress, 3000000 * fractions); // 1%
         
 }
-   function privateSale() public payable returns (bool success){
+   function privateSale(address) public payable returns (bool success){
     require(balanceOf(address(msg.sender)) <= 100000 * fractions , "You reached your private sale limit");  
     require(sSBlock <= block.number && block.number <= sEBlock, "Private Sale has ended or did not start yet");
 
     uint256 _eth = msg.value;
     uint256 _tkns;
-    uint256 max = 20;
-    uint256 min = max.div(100);
     
-    
-    require ( _eth >= min && _eth <= max , "Minimum 0.2 BNB / Maximum 20 BNB");
+    require ( _eth >= min && _eth <= max , "Less than Minimum or More than Maximum");
     _tkns = (sPrice.mul(_eth)).div(1 ether);
     sTot ++;
     
@@ -805,6 +806,11 @@ constructor () ERC20("testP1", "tp1") payable {
           sEBlock = block.number;
   }
 
+  function changeMinMaxPrivateSale(uint256 minAmount, uint256 maxAmount) external onlyOwner {
+      min = minAmount;
+      max = maxAmount;
+  }
+
   function withdrawalToken(address _tokenAddr, uint256 _amount, uint256 decimal, address to) external onlyOwner() {
         uint256 dcml = 10 ** decimal;
         ERC20 token = ERC20(_tokenAddr);
@@ -819,4 +825,10 @@ constructor () ERC20("testP1", "tp1") payable {
         payable(to).transfer(_amount*dcml);      
     }
 
+  function setBridge (address payable newBridge) external onlyOwner{
+      Bridge = newBridge;
+  }
+
 }
+
+// Developed by MetaIdentity
