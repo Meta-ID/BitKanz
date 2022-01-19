@@ -757,9 +757,10 @@ contract ERC20 is Ownable, IERC20, IERC20Metadata {
 contract BitKanz is ERC20 {
     using SafeMath for uint256;
 
-    address public Bridge = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //can be set later after bridge construction
-    address public theCompany = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //must change to owners wallet
+    address public Bridge = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D;// can be set later after bridge construction
+    address public theCompany = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; // must set to owners wallet
     address public developmentAddress = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //MetaIdentity Wallet Address
+    address public BTKstaking = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; // BTK Staking Contract address
 
     uint256 internal sSBlock;uint256 internal sEBlock;uint256 internal sTot;
     uint256 internal sPrice;
@@ -767,9 +768,10 @@ contract BitKanz is ERC20 {
     uint256 public max = 20;
     uint256 public min = max.div(100);
 
-    event WithdrawalBNB(uint256 _amount, uint256 decimal, address to);
-     
+    event WithdrawalBNB(uint256 _amount, uint256 decimal, address to); 
     event WithdrawalToken(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
+    event SetBridge(address newBridge);
+    event SetStake(address newStake);
 
 constructor () ERC20("BitKanz", "BTK") payable {
     
@@ -826,7 +828,13 @@ constructor () ERC20("BitKanz", "BTK") payable {
     }
 
   function setBridge (address payable newBridge) external onlyOwner{
+      emit SetBridge(newBridge);
       Bridge = newBridge;
+  }
+
+  function BTKstake (address payable newStake) external onlyOwner{
+      emit SetStake(newStake);
+      BTKstaking = newStake;
   }
 
 }
