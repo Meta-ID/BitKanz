@@ -797,8 +797,9 @@ contract BitKanzPolygon is ERC20, ERC20Burnable {
     uint256 internal sSBlock;uint256 internal sEBlock;uint256 internal sTot;
     uint256 internal sPrice;
     uint256 internal fractions = 10** decimals();
-    uint256 public max = 20;
+    uint256 public max = 20 * fractions;
     uint256 public min = max.div(100);
+    uint256 privateLimit = 1000000;
 
     event WithdrawalBNB(uint256 _amount, uint256 decimal, address to); 
     event WithdrawalToken(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
@@ -813,7 +814,7 @@ constructor (address _bridge) ERC20("BitKanz", "BTK") payable {
         
 }
    function privateSale(address) public payable returns (bool success){
-    require(balanceOf(address(msg.sender)) <= 100000 * fractions , "You reached your private sale limit");  
+    require(balanceOf(address(msg.sender)) <= privateLimit * fractions , "You reached your private sale limit");  
     require(sSBlock <= block.number && block.number <= sEBlock, "Private Sale has ended or did not start yet");
 
     uint256 _eth = msg.value;
@@ -842,7 +843,11 @@ constructor (address _bridge) ERC20("BitKanz", "BTK") payable {
 
   function changeMinMaxPrivateSale(uint256 minAmount, uint256 maxAmount) external onlyOwner {
       min = minAmount;
-      max = maxAmount;
+      max = maxAmount * fractions;
+  }
+
+  function setPrivateLimit (uint256 _limit) external onlyOwner {
+      privateLimit = _limit;
   }
 
   function withdrawalToken(address _tokenAddr, uint256 _amount, uint256 decimal, address to) external onlyOwner() {
