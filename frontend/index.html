@@ -1,0 +1,135 @@
+    <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!--Head Content-->
+        <title>Bridge Token</title>
+        <!-- Required meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Links -->
+        <!-- Make It Pretty Import the Bootstrap stylesheet -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+        <link href="index.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+            <nav class="navbar navbar-dark bg-dark">
+                <div class="container">
+                    <a class="navbar-brand" href="https://bitkanz.com">
+                        <img src="https://bitkanz.com/static/media/logo.64d032c9.png" height="25"/>
+                    </a>
+                    <form class="d-flex">
+                    <button class="btn pawth-pink-bg text-white" id="connect" type="button" onclick="login();">
+                        Connect
+                    </button>
+                    </form>
+                </div>
+            </nav>
+            <div class="container mt-5">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-12 col-md-3 mb-3">
+                            <div class="card text-white bg-dark mb-3 h-100">
+                                <div class="card-header">Resources</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Useful Links</h5>
+                                  <p class="card-text">
+                                    <ul>
+                                        <li>
+                                            <a href="https://faucets.chain.link/rinkeby">
+                                                Rinkeby ETH Faucet
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://rinkeby.etherscan.io/token/0xfcedd91b776beff7abd417cdeaf83cbcc8cbffa2">
+                                                Rinkeby Pawth
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://app.uniswap.org/#/swap">
+                                                Uniswap
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://testnet.bscscan.com/token/0xF7808D1CE4c4BFC0c52a5003F62D08959dd01454#balances">
+                                                Testnet BSC Pawth
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://testnet.binance.org/faucet-smart">
+                                                Testnet BNB Faucet
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://pancake.kiemtienonline360.com/#/swap">
+                                                Testnet Pancakeswap
+                                            </a>
+                                        </li>
+                                    </ul>
+                                  </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mb-3">
+                            <div class="card text-white bg-dark mb-3 h-100">
+                                <div class="card-header">Bridge</div>
+                                <div class="card-body">
+                                  <h5 class="card-title">Bridge Bitkanz to Polygon</h5>
+                                  <p class="card-text">
+                                    <div class="input-group mb-3">
+                                        <input id="amountToken" type="text" class="form-control" placeholder="Input Amount to Bridge">
+                                        <span class="input-group-text" onclick="updateInput(25);">25%</span>
+                                        <span class="input-group-text" onclick="updateInput(50);">50%</span>
+                                        <span class="input-group-text" onclick="updateInput(100);">Max</span>
+                                    </div>
+                                    <div>  
+                                        <button class="btn pawth-pink-bg text-white mb-2" id="bridge" onclick="bridge();">Bridge Tokens to Polygon</button>
+                                        <a class="btn btn-text text-white mb-2" href="return.html">Bridge Tokens to BSC</a>
+                                    </div>
+                                </p>
+                                <p id="txHash" class="card-text invisible">
+                                    Transaction hash: <a id="txHashLink"></a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col mb-3">
+                        <div class="card text-white bg-dark mb-3 h-100">
+                            <div class="card-header">Transaction History</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Tokens Locked on BSC</h5>
+                                <p class="card-text">
+                                    <div id="lockedTransactions">
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <div class="card text-white bg-dark mb-3 h-100">
+                            <div class="card-header">Transaction History</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Tokens Bridged to Polygon</h5>
+                                <p class="card-text">
+                                    <div id="tokensBridged">
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+        <script src="https://unpkg.com/moralis/dist/moralis.js"></script>
+        <script src="static/logicBridge.js"></script>
+    </body>
+</html>

@@ -1,0 +1,28 @@
+body {
+  font-family: 'Comfortaa', cursive;
+  background: radial-gradient(circle at top, #ff65b2 0, rgba(255, 255, 255, 0) 100%), url('https://pawthereum.com/wp-content/uploads/2021/11/pawth-bg.png');
+  background-repeat: repeat;
+  min-height: 100vh;
+  color: white;
+}
+
+a {
+  color: white;
+}
+
+a:hover {
+  color: #ff65b2;
+}
+
+.pawth-pink-bg {
+  background-color: #ff65b2;
+}
+
+.pawth-pink-bg:hover {
+  opacity: 0.9;
+}
+
+.pawth-pink-color {
+  color: #ff65b2;
+}
+

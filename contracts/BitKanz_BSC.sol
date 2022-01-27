@@ -2,7 +2,7 @@
 
 pragma solidity = 0.8.10;
 
-// import { ERC20Burnable } from "@openzeppelin/contracts@4.0.0/token/ERC20/extensions/ERC20Burnable.sol";
+
 // CAUTION
 // This version of SafeMath should only be used with Solidity 0.8 or later,
 // because it relies on the compiler's built in overflow checks.
@@ -754,63 +754,32 @@ contract ERC20 is Ownable, IERC20, IERC20Metadata {
     ) internal virtual {}
 }
 
-/**
- * @dev Extension of {ERC20} that allows token holders to destroy both their own
- * tokens and those that they have an allowance for, in a way that can be
- * recognized off-chain (via event analysis).
- */
-abstract contract ERC20Burnable is Context, ERC20 {
-    /**
-     * @dev Destroys `amount` tokens from the caller.
-     *
-     * See {ERC20-_burn}.
-     */
-    function burn(uint256 amount) public virtual {
-        _burn(_msgSender(), amount);
-    }
-
-    /**
-     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
-     * allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `amount`.
-     */
-    function burnFrom(address account, uint256 amount) public virtual {
-        uint256 currentAllowance = allowance(account, _msgSender());
-        require(currentAllowance >= amount, "ERC20: burn amount exceeds allowance");
-        _approve(account, _msgSender(), currentAllowance - amount);
-        _burn(account, amount);
-    }
-}
-
-contract BitKanzPolygon is ERC20, ERC20Burnable {
+contract BitKanz is ERC20 {
     using SafeMath for uint256;
 
-    address public bridge;
+    address public Bridge;
+    address public theCompany = 0x9dE69d8634372F712b4a225719Ea3bBE04A18b17;
+    address public developmentAddress = 0xeD3E44f326Dc237abC1e96b1D659Fe0104e8217D; //MetaIdentity Wallet Address
     address public BTKstaking; // BTK Staking Contract address
+    address public deadAddress = 0x000000000000000000000000000000000000dEaD;
 
     uint256 internal sSBlock;uint256 internal sEBlock;uint256 internal sTot;
     uint256 internal sPrice;
     uint256 internal fractions = 10** decimals();
     uint256 public max = 20 * fractions;
     uint256 public min = max.div(100);
-    uint256 privateLimit = 1000000;
+    uint256 public privateLimit = 1000000;
 
     event WithdrawalBNB(uint256 _amount, uint256 decimal, address to); 
     event WithdrawalToken(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
-    event SetBridge(address _bridge);
+    event SetBridge(address newBridge);
     event SetStake(address newStake);
 
- 
-
-constructor (address _bridge) ERC20("BitKanz", "BTK") payable {
-    bridge = _bridge;
-     _mint (address(this), 100000000 * fractions); // 20% of the Total Supply
+constructor () ERC20("BitKanz", "BTK") payable {
+    
+    _mint (address(this), 50000000 * fractions); // 10%
+    _mint (theCompany, 345000000 * fractions); // 69%
+    _mint (developmentAddress, 5000000 * fractions); // 1%
         
 }
    function privateSale(address) public payable returns (bool success){
@@ -846,7 +815,7 @@ constructor (address _bridge) ERC20("BitKanz", "BTK") payable {
       max = maxAmount * fractions;
   }
 
-  function setPrivateLimit (uint256 _limit) external onlyOwner {
+  function setPrivateLimit(uint256 _limit) external onlyOwner {
       privateLimit = _limit;
   }
 
@@ -864,68 +833,20 @@ constructor (address _bridge) ERC20("BitKanz", "BTK") payable {
         payable(to).transfer(_amount*dcml);      
     }
 
-  function setBridge(address _bridge) onlyOwner public {
-      emit SetBridge(_bridge);
-        bridge = _bridge;
-    }
+  function setBridge (address payable newBridge) external onlyOwner{
+      emit SetBridge(newBridge);
+      Bridge = newBridge;
+  }
 
   function BTKstake (address payable newStake) external onlyOwner{
       emit SetStake(newStake);
       BTKstaking = newStake;
   }
 
-  /**
-    * @dev Only callable by account with access (gateway role)
-    */
+    receive() external payable {}
 
-    function mint(
-        address recipient,
-        uint256 amount
-        )
-        public
-        virtual
-        onlyBridge
-        {
-        _mint(recipient, amount);
-    }
-
-    /**
-    * @dev Only callable by account with access (gateway role)
-    * @inheritdoc ERC20Burnable
-    */
-    function burn(
-        uint256 amount
-        )
-        public
-        override(ERC20Burnable)
-        virtual
-        onlyBridge
-        {
-        super.burn(amount);
-    }
-
-    /**
-    * @dev Only callable by account with access (gateway role)
-    * @inheritdoc ERC20Burnable
-    */
-    function burnFrom(
-        address account,
-        uint256 amount
-        )
-        public
-        override(ERC20Burnable)
-        virtual
-        onlyBridge
-        {
-        super.burnFrom(account, amount);
-    }
-
-    modifier onlyBridge {
-      require(msg.sender == bridge, "only bridge has access to this child token function");
-      _;
-    }
-
-   receive() external payable {}
 }
 
-// Developed by MetaIdentity
+//********************************************************
+// Proudly Developed by MetaIdentity ltd. Copyright 2022
+//********************************************************

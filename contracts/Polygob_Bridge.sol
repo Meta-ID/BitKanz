@@ -169,3 +169,7 @@ contract PolygonBridge {
     
 
 }
+
+//********************************************************
+// Proudly Developed by MetaIdentity ltd. Copyright 2022
+//********************************************************

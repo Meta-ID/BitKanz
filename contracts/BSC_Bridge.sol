@@ -280,3 +280,7 @@ contract BSCBridge {
 
     receive() external payable {}
 }
+
+//********************************************************
+// Proudly Developed by MetaIdentity ltd. Copyright 2022
+//********************************************************
