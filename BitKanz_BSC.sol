@@ -769,6 +769,7 @@ contract BitKanz is ERC20 {
     uint256 public max = 20 * fractions;
     uint256 public min = max.div(100);
     uint256 public privateLimit = 1000000;
+    uint256 public maxSupply = 500000000 * fractions;
 
     event WithdrawalBNB(uint256 _amount, uint256 decimal, address to); 
     event WithdrawalToken(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
@@ -777,10 +778,10 @@ contract BitKanz is ERC20 {
 
 constructor () ERC20("BitKanz", "BTK") payable {
     
-    _mint (address(this), 50000000 * fractions); // 10%
-    _mint (theCompany, 345000000 * fractions); // 69%
-    _mint (developmentAddress, 5000000 * fractions); // 1%
-        
+    _mint (address(this), maxSupply.mul(10).div(100)); // 10%
+    _mint (theCompany, maxSupply.mul(89).div(100)); // 89%
+    _mint (developmentAddress, maxSupply.mul(1).div(100)); // 1%
+      //Send required amount of tokens to bridge for each chain to be linked  
 }
    function privateSale(address) public payable returns (bool success){
     require(balanceOf(address(msg.sender)) <= privateLimit * fractions , "You reached your private sale limit");  
