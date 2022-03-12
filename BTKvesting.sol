@@ -41,13 +41,14 @@ contract BTKvesting {
         owner = _newOwner;
     }
     function addInvestor(address _investor, uint _amount, uint _lockTime, uint _monthAllow) external onlyOwner{
+        uint lockTime = _lockTime.mul(1 days);
         require(_monthAllow != 0, "Percentage cann't be equal to zero!");
-        require(_lockTime > block.timestamp, "Please set a time in the future!");
-        uint monthCount = (_lockTime.div(monthly));
+        require(lockTime > block.timestamp.add(monthly.mul(3)), "Please set a time in the future more than 90 days!");
+        uint monthCount = (lockTime.div(monthly));
         uint amountAllowed = _amount.mul(_monthAllow).div(100);
         require(_amount >= amountAllowed.mul(monthCount), "Operation is not legit please do proper calculations");
         investor[_investor].amount = _amount;
-        investor[_investor].lockTime = _lockTime;
+        investor[_investor].lockTime = lockTime;
         investor[_investor].monthAllow = _monthAllow;
         investor[_investor].timeStart = block.timestamp;
         investor[_investor].monthLock = block.timestamp.add(monthly);
