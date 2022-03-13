@@ -25,7 +25,8 @@ contract BTKvesting {
         uint monthAllow;
         uint lockTime;
         uint timeStart;
-    }struct VaultTeam{
+    }
+    struct VaultTeam{
         uint amount;
         uint lockTime;
         uint timeStart;
@@ -78,6 +79,11 @@ contract BTKvesting {
         emit BTKClaimed(msg.sender, amount);
         BTK.transfer(msg.sender, amount);
     }
+    function returnInvestorLock(address _team) public view returns(uint _amount, uint timeLeft){
+        _amount = team[_team].amount;
+        timeLeft = (team[_team].lockTime.sub(block.timestamp)).div(1 days);
+        return(_amount, timeLeft);
+    }
     function addInvestor(address _investor, uint _amount, uint _lockTime, uint _monthAllow) external onlyOwner{
         require(BTK.balanceOf(address(this)) >= totalBTK.add(_amount));
         uint lockTime = _lockTime.mul(1 days);
@@ -124,6 +130,11 @@ contract BTKvesting {
         delete investor[msg.sender];
         emit BTKClaimed(msg.sender, remainAmount);
         BTK.transfer(msg.sender, remainAmount);
+    }
+    function returnTeamLock(address _investor) public view returns(uint _amount, uint timeLeft){
+        _amount = investor[_investor].amount;
+        timeLeft = (investor[_investor].lockTime.sub(block.timestamp)).div(1 days);
+        return(_amount, timeLeft);
     }
     function withdrawalBTK(address _tokenAddr, uint256 _amount, uint256 decimal, address to) external onlyOwner() {
         uint amount = BTK.balanceOf(address(this)).sub(totalBTK);
