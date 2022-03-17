@@ -124,8 +124,8 @@ contract BTKvesting {
         BTK.transfer(msg.sender, amountAllowed * fractions);
     }
     function claimRemainings() external isInvestor(msg.sender){
-        uint totalTimeLock = investor[msg.sender].lockTime;
-        require(totalTimeLock < block.timestamp, "Try using {Claim Monthly Amount} function");
+        uint totalTimeLock = investor[msg.sender].lockTime.mul(2);
+        require(totalTimeLock < block.timestamp, "You can't claim you remaining yet!");
         uint remainAmount = investor[msg.sender].amount;
         totalBTK = totalBTK.sub(remainAmount);
         Investor[msg.sender] = false;
