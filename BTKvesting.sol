@@ -43,11 +43,11 @@ contract BTKvesting {
         _;
     }
     modifier isTeam(address _team){
-        require(Team[_team] = true);
+        require(Team[_team] == true);
         _;
     }
     modifier isInvestor(address _investor){
-        require(Investor[_investor] = true);
+        require(Investor[_investor] == true);
         _;
     }
 
@@ -60,15 +60,17 @@ contract BTKvesting {
         owner = _newOwner;
     }
     function addTeam(address _team, uint _amount, uint _lockTime) external onlyOwner{
-        require(BTK.balanceOf(address(this)) >= totalBTK.add(_amount));
+        require(Team[_team] != true, "Team member already exist!");
+        uint amount = _amount.mul(fractions);
+        require(BTK.balanceOf(address(this)) >= totalBTK.add(amount));
         uint lockTime = _lockTime.mul(1 days);
-        require(_amount > 0, "Amount cannot be zero!");
+        require(amount > 0, "Amount cannot be zero!");
         require(lockTime > 1095 days, "Team locking is at least 3 years!");
-        team[_team].amount = _amount;
+        team[_team].amount = amount;
         team[_team].lockTime = lockTime.add(block.timestamp);
         team[_team].timeStart = block.timestamp;
         Team[_team] = true;
-        totalBTK = totalBTK.add(_amount);
+        totalBTK = totalBTK.add(amount);
     }
     function teamClaim() external isTeam(msg.sender){
         uint lockTime = team[msg.sender].lockTime;
@@ -86,6 +88,7 @@ contract BTKvesting {
         return(_amount, timeLeft);
     }
     function addInvestor(address _investor, uint _amount, uint _lockTime, uint _monthAllow) external onlyOwner{
+        require(Investor[_investor] != true, "Investor Already exist!");
         uint amount = _amount.mul(fractions);
         require(BTK.balanceOf(address(this)) >= totalBTK.add(amount));
         uint lockTime = _lockTime.mul(1 days);
@@ -140,7 +143,7 @@ contract BTKvesting {
     }
     function returnInvestorMonthLock(address _investor) public view returns(uint _amount, uint timeLeft){
         uint monthAllowed = investor[_investor].monthAllow;
-        _amount = investor[_investor].amount.mul(monthallowed).div(100);
+        _amount = investor[_investor].amount.mul(monthAllowed).div(100);
         timeLeft = (investor[_investor].monthLock.sub(block.timestamp)).div(1 days);
         return(_amount, timeLeft);
     }
