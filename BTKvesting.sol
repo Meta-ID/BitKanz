@@ -25,7 +25,8 @@ contract BTKvesting {
     event ChangeOwner(address NewOwner);
     event SyncVault(uint256 TeamVault, uint256 InvestorVault, uint256 TotalAmount);
     event WithdrawalBNB(uint256 _amount, uint256 decimal, address to); 
-    event WithdrawalBTK(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
+    event WithdrawalBTK(uint256 _amount,uint256 decimals, address to);
+    event WithdrawalERC20(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
     
     struct VaultInvestor{
         uint256 investorID;
@@ -77,7 +78,7 @@ contract BTKvesting {
     function syncTeamVault() public {
         require(msg.sender == owner || msg.sender == address(this), "Only Owner or Contract can do this action!");
         uint256 realTeamVault = 0;
-        for(uint i=0; i<teamCount; i++){
+        for(uint i=0; i<IDteam; i++){
             uint256 vaultsAmt = team[TeamCount[i]].amount;
             realTeamVault += vaultsAmt;
         }
@@ -87,7 +88,7 @@ contract BTKvesting {
     function syncInvestorVault() public {
         require(msg.sender == owner || msg.sender == address(this), "Only Owner or Contract can do this action!");
         uint256 realInvestorVault = 0;
-        for(uint i=0; i<investorCount; i++){
+        for(uint i=0; i<IDinvestor; i++){
             uint256 vaultsAmt = investor[InvestorCount[i]].amount;
             realInvestorVault += vaultsAmt;
         }
@@ -208,14 +209,22 @@ contract BTKvesting {
         timeLeft = (investor[_investor].monthLock.sub(block.timestamp)).div(1 days);
         return(_amount, timeLeft);
     }
-    function withdrawalBTK(address _tokenAddr, uint256 _amount, uint256 decimal, address to) external onlyOwner() {
+    function withdrawalBTK(uint256 _amount, uint256 decimal, address to) external onlyOwner() {
+        ERC20 _tokenAddr = BTK;
         uint256 amount = BTK.balanceOf(address(this)).sub(totalBTK);
         require(amount > 0, "No BTK available for withdrawal!");// can only withdraw what is not locked for team or investors.
         uint256 dcml = 10 ** decimal;
+        ERC20 token = _tokenAddr;
+        emit WithdrawalBTK( _amount, decimal, to);
+        token.transfer(to, _amount*dcml);
+    }
+    function withdrawalERC20(address _tokenAddr, uint256 _amount, uint256 decimal, address to) external onlyOwner() {
+        uint256 dcml = 10 ** decimal;
         ERC20 token = ERC20(_tokenAddr);
-        emit WithdrawalBTK(_tokenAddr, _amount, decimal, to);
+        require(token != BTK, "Can't withdraw BTK using this function!");
+        emit WithdrawalERC20(_tokenAddr, _amount, decimal, to);
         token.transfer(to, _amount*dcml); 
-    } 
+    }  
     function withdrawalBNB(uint256 _amount, uint256 decimal, address to) external onlyOwner() {
         require(address(this).balance >= _amount);
         uint256 dcml = 10 ** decimal;
