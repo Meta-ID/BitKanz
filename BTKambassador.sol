@@ -4,7 +4,7 @@ import "./BitKanz.sol";
 
 pragma solidity = 0.8.10;
 
-contract BTKvesting {
+contract BTKambassador {
     using SafeMath for uint256;
     BitKanz public BTK;
     address private owner;
