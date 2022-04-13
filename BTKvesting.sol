@@ -154,7 +154,7 @@ contract BTKvesting {
         investor[_investor].lockTime = lockTime.add(block.timestamp);
         investor[_investor].monthAllow = _monthAllow;
         investor[_investor].timeStart = block.timestamp;
-        investor[_investor].monthLock = block.timestamp.add(lockTime).add(monthly);
+        investor[_investor].monthLock = lockTime.add(block.timestamp);
         Investor[_investor] = true;
         investorVault += amount;
         totalBTK = teamVault.add(investorVault);
@@ -163,16 +163,13 @@ contract BTKvesting {
     function claimMonthlyAmount() external isInvestor(msg.sender){
         uint256 totalTimeLock = investor[msg.sender].monthLock;
         uint256 remainAmount = investor[msg.sender].amount;
-        uint256 checkTime = block.timestamp;
-        require(totalTimeLock < block.timestamp, "Your need to wait till your token get unlocked");
+        require(totalTimeLock <= block.timestamp, "Your need to wait till your token get unlocked");
         require(remainAmount > 0, "You don't have any tokens");
-        require(checkTime <= totalTimeLock);
-        uint256 addOneMonth = investor[msg.sender].monthLock;
         uint256 percentage = investor[msg.sender].monthAllow;   
         uint256 amountAllowed = remainAmount.mul(percentage).div(100);
         uint256 _investorID = investor[msg.sender].investorID;
         investor[msg.sender].amount = remainAmount.sub(amountAllowed);
-        investor[msg.sender].monthLock = addOneMonth.add(monthly);
+        investor[msg.sender].monthLock += monthly;
         investorVault -= amountAllowed;
         totalBTK = teamVault.add(investorVault);
         if(investor[msg.sender].amount == 0){
@@ -181,11 +178,11 @@ contract BTKvesting {
             delete InvestorCount[_investorID];
             investorCount--;
         }
-        emit BTKClaimed(msg.sender, amountAllowed * fractions);
-        BTK.transfer(msg.sender, amountAllowed * fractions);
+        emit BTKClaimed(msg.sender, amountAllowed);
+        BTK.transfer(msg.sender, amountAllowed);
     }
     function claimRemainings() external isInvestor(msg.sender){
-        uint256 totalTimeLock = investor[msg.sender].lockTime.mul(2);
+        uint256 totalTimeLock = investor[msg.sender].lockTime.add(365 days);
         require(totalTimeLock < block.timestamp, "You can't claim you remaining yet!");
         uint256 remainAmount = investor[msg.sender].amount;
         uint256 _investorID = investor[msg.sender].investorID;
@@ -194,8 +191,8 @@ contract BTKvesting {
         Investor[msg.sender] = false;
         delete investor[msg.sender];
         delete InvestorCount[_investorID];
-        emit BTKClaimed(msg.sender, remainAmount * fractions);
-        BTK.transfer(msg.sender, remainAmount * fractions);
+        emit BTKClaimed(msg.sender, remainAmount);
+        BTK.transfer(msg.sender, remainAmount);
         investorCount--;
     }
     function returnInvestorLock(address _investor) public view returns(uint256 _amount, uint256 timeLeft){
