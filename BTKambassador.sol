@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-import "./BitKanz.sol";
+import "./Bitkanz-BSC.sol";
 
 pragma solidity = 0.8.10;
 
@@ -11,8 +11,7 @@ contract BTKambassador {
     uint256 fractions = 10**18;
     uint256 private IDambassador;
     uint256 private Price;
-    uint256 private limit;
-    uint256 private percentage;
+    uint256 private limit = 10 * fractions;
 
     event BTKsale(address Investor, uint256 ForInvestor, uint256 ForAmbassador, uint256 AmbassadorID, string Country);
     event ChangeOwner(address NewOwner);
@@ -21,7 +20,9 @@ contract BTKambassador {
     event WithdrawalERC20(address _tokenAddr, uint256 _amount,uint256 decimals, address to);
     
     struct newAmbsdr{
+        uint256 ID;
         address ambsdrAddress;
+        uint256 percentage;
         string Country;
     }
 
@@ -48,28 +49,28 @@ contract BTKambassador {
     function setLimit(uint256 _limit) external onlyOwner{
         limit = _limit;
     }
-    function setPercentage(uint256 _percentage) external onlyOwner{
-        percentage = _percentage;
-    }
-    function addAmbassador(address _ambsdr, string memory _country) external onlyOwner{
+    function addAmbassador(uint256 _ID, address _ambsdr, uint256 _percentage, string memory _country) external onlyOwner{
         IDambassador++;
+        ambassadorID[IDambassador].ID = _ID;
         ambassadorID[IDambassador].ambsdrAddress = _ambsdr;
+        ambassadorID[IDambassador].percentage = _percentage;
         ambassadorID[IDambassador].Country = _country;
     }
     function privateSaleA(uint256 _ambassadorID) public payable returns(bool success){
-        require(_ambassadorID > 0, "Please type a real ID");
         require(IDambassador > 0,"No ambassadors added!");
         uint256 _eth = msg.value;
         require(_eth > 0 && _eth < limit, "Amount should be greater than Zero and less than limit!");
         uint256 _tkns;
         uint256 forAmbsdr;
+        uint256 _ID = ambassadorID[_ambassadorID].ID;
         address ambsdr = ambassadorID[_ambassadorID].ambsdrAddress;
         string memory _country = ambassadorID[_ambassadorID].Country;
+        uint256 _percentage = ambassadorID[_ambassadorID].percentage;
        _tkns = (Price.mul(_eth)).div(1 ether);
-       forAmbsdr = (_tkns.mul(percentage)).div(100);
+       forAmbsdr = (_tkns.mul(_percentage)).div(100);
        uint256 totalAmount = _tkns.add(forAmbsdr);
        require(BTK.balanceOf(address(this))> totalAmount, "Insufficient Balance!");
-       emit BTKsale(msg.sender, _tkns.div(fractions), forAmbsdr.div(fractions), _ambassadorID, _country);
+       emit BTKsale(msg.sender, _tkns.div(fractions), forAmbsdr.div(fractions), _ID, _country);
        BTK.transfer(msg.sender, _tkns);
        BTK.transfer(ambsdr, forAmbsdr);
        return true;
